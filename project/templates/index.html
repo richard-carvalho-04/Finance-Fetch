@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Fetch</title>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f4f9;
+            color: #333;
+        }
+
+        h1, h3 {
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        h1 {
+            margin: 20px 0;
+        }
+
+        hr {
+            border: 0;
+            height: 1px;
+            background: #ddd;
+            margin: 20px 0;
+        }
+
+        /* Container Styles */
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: 40px auto 20px; /* Adjusted margin to add space from the top */
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-container {
+            margin-bottom: 20px;
+        }
+
+        .button {
+            display: inline-block;
+            background: #3498db;
+            color: #fff;
+            padding: 10px 20px;
+            margin: 10px 0;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .button:hover {
+            background: #2980b9;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        /* Results Section */
+        #results {
+            background: #ecf0f1;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        #results h3, #results h4 {
+            margin: 10px 0;
+        }
+
+        #results ul {
+            padding-left: 20px;
+        }
+
+        #results ul li {
+            margin: 5px 0;
+            color: #16a085;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            font-size: 14px;
+            color: #aaa;
+            position: fixed; /* Ensures the footer stays at the bottom */
+            bottom: 0;
+            width: 100%;
+            background: #f4f4f9;
+            padding: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Finance Fetch: News Research Tool 📈</h1>
+        <div>
+            <h3>Enter URLs:</h3>
+            <div class="input-container">
+                <input type="text" id="url1" placeholder="URL 1">
+                <input type="text" id="url2" placeholder="URL 2">
+                <input type="text" id="url3" placeholder="URL 3">
+            </div>
+            <button class="button" onclick="processUrls()">Process URLs</button>
+        </div>
+        <hr>
+        <div>
+            <h3>Ask a Question:</h3>
+            <input type="text" id="question" placeholder="Enter your question">
+            <button class="button" onclick="askQuestion()">Get Answer</button>
+        </div>
+        <hr>
+        <div id="results">
+            <!-- Results will be dynamically injected here -->
+        </div>
+    </div>
+    <footer>
+        &copy; 2024 Finance Fetch. All rights reserved.
+    </footer>
+
+    <script>
+        function processUrls() {
+            const urls = [
+                document.getElementById("url1").value,
+                document.getElementById("url2").value,
+                document.getElementById("url3").value
+            ];
+            fetch("/process_urls", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ urls })
+            })
+            .then(response => response.json())
+            .then(data => alert(data.message || data.error));
+        }
+
+        function askQuestion() {
+            const question = document.getElementById("question").value;
+            fetch("/ask", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ question })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const results = document.getElementById("results");
+                results.innerHTML = `
+                    <h3>Answer:</h3>
+                    <p>${data.answer || data.error}</p>
+                    <h4>Sources:</h4>
+                    <ul>${(data.sources || []).map(src => `<li>${src}</li>`).join("")}</ul>
+                `;
+            });
+        }
+    </script>
+</body>
+</html>
